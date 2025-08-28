@@ -1,6 +1,7 @@
 import random, os
 from google import genai
 from dotenv import load_dotenv
+from sys import stderr
 
 MAX_QUESTIONS = 10
 GEMINI_MODEL = "gemma-3-27b-it"
@@ -155,12 +156,12 @@ def ask_question(user_question: str, session_id: str):
         response = client.models.generate_content(
             model=GEMINI_MODEL,
             contents=prompt_for_user_message,
-            config=genai.types.GenerateContentConfig(temperature=0.4, top_p=0.9),
+            config=genai.types.GenerateContentConfig(temperature=0.35, top_p=0.9),
         )
         return response.text.strip()
     except Exception as e:
-        print(f"Error calling LLM: {e}")
-        return f"I'm having trouble accessing the case files at the moment.\n\n{e}"
+        print(f"Error calling LLM: {e}", file=stderr)
+        return "I'm having trouble accessing the case files at the moment."
 
 
 def get_hint(session_id: str):
@@ -184,11 +185,12 @@ def get_hint(session_id: str):
     try:
         if not client:
             raise ConnectionError("Google GenAI client is not initialized.")
-        response = client.generate_content(
+        response = client.models.generate_content(
             model=GEMINI_MODEL,
             contents=hint_prompt,
+            config=genai.types.GenerateContentConfig(temperature=0.8, top_p=0.9),
         )
         return response.text.strip()
     except Exception as e:
-        print(f"Error calling LLM for hint: {e}")
+        print(f"Error calling LLM for hint: {e}", file=stderr)
         return "I can't seem to find a good hint right now."
