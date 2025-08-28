@@ -155,9 +155,7 @@ def ask_question(user_question: str, session_id: str):
         response = client.models.generate_content(
             model=GEMINI_MODEL,
             contents=prompt_for_user_message,
-            generation_config=genai.types.GenerateContentConfig(
-                temperature=0.4, top_p=0.9
-            ),
+            config=genai.types.GenerateContentConfig(temperature=0.4, top_p=0.9),
         )
         return response.text.strip()
     except Exception as e:
