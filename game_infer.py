@@ -188,7 +188,7 @@ def get_hint(session_id: str):
         response = client.models.generate_content(
             model=GEMINI_MODEL,
             contents=hint_prompt,
-            config=genai.types.GenerateContentConfig(temperature=0.8, top_p=0.9),
+            config=genai.types.GenerateContentConfig(temperature=0.6, top_p=0.9),
         )
         return response.text.strip()
     except Exception as e:
