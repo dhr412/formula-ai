@@ -50,9 +50,6 @@ session_games = {}
 
 
 def _get_or_create_game(session_id: str):
-    """
-    Retrieves the game state for a session, creating a new one if it doesn't exist.
-    """
     if session_id not in session_games:
         culprit = random.choice(AI_SUSPECTS)
         session_games[session_id] = {
@@ -64,9 +61,6 @@ def _get_or_create_game(session_id: str):
 
 
 def _build_facts_and_instruction(culprit_name: str):
-    """
-    Builds the dynamic case file and system prompt for the LLM.
-    """
     clues = [
         "CASE BRIEF: Formula.AI Grand Prix Final at SymbiTech Circuit",
         "INCIDENT: In the final moments of the race, the leading car crashed while entering a high-speed chicane.",
@@ -167,7 +161,7 @@ def ask_question(user_question: str, session_id: str):
         return response.text.strip()
     except Exception as e:
         print(f"Error calling LLM: {e}")
-        return "I'm having trouble accessing the case files at the moment."
+        return f"I'm having trouble accessing the case files at the moment.\n\n{e}"
 
 
 def get_hint(session_id: str):
