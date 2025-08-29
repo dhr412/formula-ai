@@ -104,6 +104,8 @@ def _build_facts_and_instruction(culprit_name: str):
     4. For all other questions, provide concise and helpful answers based on the case facts.
     5. Only if a question is completely unanswerable should you say, "I don't have that specific information in the case files."
     6. Never reveal the culprit's identity unless the user guesses correctly.
+    
+    DO NOT answer unrelated questions.
     """
     return facts_block, system_instruction
 
