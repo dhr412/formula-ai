@@ -10,7 +10,6 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Titillium+Web:wght@600;700;900&family=Roboto:wght@400;500&display=swap"
         rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/2.1.0/showdown.min.js"></script>
     <style>
         :root {
             --primary-red: #FF1801;
@@ -359,7 +358,6 @@
         let isLoading = false;
         let sessionId = null;
         let isGameOver = false;
-        const converter = new showdown.Converter();
 
         const questionInput = document.getElementById('questionInput');
         const sendBtn = document.getElementById('sendBtn');
@@ -409,7 +407,8 @@
                 messageContent += '<div class="bot-avatar">🤖</div>';
             }
 
-            messageContent += `<div class="message-bubble">`;
+            messageContent += `<div class="message-bubble">
+`;
             if (isLoading) {
                 messageContent += `<div class="loading">
                     <span class="typing-indicator"></span>
@@ -420,7 +419,7 @@
                 if (isUser) {
                     messageContent += text;
                 } else {
-                    messageContent += converter.makeHtml(text);
+                    messageContent += formatMarkdown(text);
                 }
             }
             messageContent += `</div>`;
@@ -430,6 +429,14 @@
             chatArea.scrollTop = chatArea.scrollHeight;
 
             return messageDiv;
+        }
+
+        function formatMarkdown(text) {
+            let html = text
+                .replace(/\*\*(.*?)\*\*/g, '<b>$1</b>')
+                .replace(/^\s*\*\s(.*)/gm, '&bull; $1')
+                .replace(/\n/g, '<br>');
+            return html;
         }
 
         async function handleApiRequest(endpoint, options) {
