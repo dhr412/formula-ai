@@ -10,6 +10,7 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Titillium+Web:wght@600;700;900&family=Roboto:wght@400;500&display=swap"
         rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/2.1.0/showdown.min.js"></script>
     <style>
         :root {
             --primary-red: #FF1801;
@@ -358,6 +359,7 @@
         let isLoading = false;
         let sessionId = null;
         let isGameOver = false;
+        const converter = new showdown.Converter();
 
         const questionInput = document.getElementById('questionInput');
         const sendBtn = document.getElementById('sendBtn');
@@ -415,7 +417,11 @@
                     <span class="typing-indicator"></span>
                 </div>`;
             } else {
-                messageContent += text;
+                if (isUser) {
+                    messageContent += text;
+                } else {
+                    messageContent += converter.makeHtml(text);
+                }
             }
             messageContent += `</div>`;
 
