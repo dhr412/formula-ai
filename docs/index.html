@@ -76,6 +76,17 @@
             font-weight: 500;
         }
 
+        .guess-counter {
+            position: absolute;
+            top: 20px;
+            right: 90px;
+            font-family: var(--font-display);
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--pure-white);
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.6);
+        }
+
         .race-icon {
             position: absolute;
             right: 25px;
@@ -304,6 +315,12 @@
                 display: none;
             }
 
+            .guess-counter {
+                position: static;
+                text-align: center;
+                padding-top: 5px;
+            }
+
             .input-container {
                 flex-direction: column;
                 gap: 15px;
@@ -322,6 +339,7 @@
         <div class="header">
             <h1>Formula.AI Sabotage</h1>
             <p>Uncover the AI culprit behind the crash!</p>
+            <div class="guess-counter" id="guess-counter"></div>
             <div class="race-icon">🏎️</div>
         </div>
 
@@ -358,6 +376,8 @@
         let isLoading = false;
         let sessionId = null;
         let isGameOver = false;
+        let wrongGuesses = 0;
+        const MAX_GUESSES = 2;
 
         const questionInput = document.getElementById('questionInput');
         const sendBtn = document.getElementById('sendBtn');
@@ -371,7 +391,25 @@
             });
             // Initial focus on the input
             questionInput.focus();
+            updateGuessCounter();
         });
+
+        function updateGuessCounter() {
+            const counterElement = document.getElementById('guess-counter');
+            if (counterElement) {
+                counterElement.textContent = `Guesses: ${wrongGuesses} / ${MAX_GUESSES}`;
+            }
+        }
+
+        function checkGuess(text) {
+            const lowerText = text.toLowerCase();
+            if (lowerText.includes('guess') && (lowerText.includes('wrong') || lowerText.includes('incorrect'))) {
+                if (wrongGuesses < MAX_GUESSES) {
+                    wrongGuesses++;
+                    updateGuessCounter();
+                }
+            }
+        }
 
         function setGameOverState(state) {
             isGameOver = state;
@@ -493,6 +531,7 @@
             if (data) {
                 const responseText = data.answer || "I'm not sure about that. Try asking a different question!";
                 addMessage(responseText);
+                checkGuess(responseText);
 
                 if (data.game_over) {
                     addMessage("This case is closed. Would you like to start a new investigation?");
@@ -503,6 +542,8 @@
 
         async function newGame() {
             sessionId = null;
+            wrongGuesses = 0;
+            updateGuessCounter();
             chatArea.innerHTML = ''; // Clear chat completely
             addMessage("New investigation started! I have a new culprit in mind. Ask your first question to begin!");
             setGameOverState(false);
@@ -542,6 +583,7 @@
 
             if (data) {
                 addMessage(data.answer);
+                checkGuess(data.answer);
                 if (data.game_over) {
                     addMessage("This case is closed. Would you like to start a new investigation?");
                     setGameOverState(true);
