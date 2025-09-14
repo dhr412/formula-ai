@@ -3,7 +3,8 @@ from google import genai
 from dotenv import load_dotenv
 from sys import stderr
 
-MAX_QUESTIONS = 10
+MAX_QUESTIONS = 3
+MAX_GUESSES = 2
 GEMINI_MODEL = "gemma-3-27b-it"
 
 load_dotenv()
@@ -56,6 +57,7 @@ def _get_or_create_game(session_id: str):
         session_games[session_id] = {
             "culprit": culprit,
             "questions_asked": 0,
+            "guesses_made": 0,
             "game_over": False,
         }
     return session_games[session_id]
@@ -95,15 +97,16 @@ def _build_facts_and_instruction(culprit_name: str):
 
     **Core Instructions:**
     - **Understand Intent:** Connect the user's questions to the case files, even if their wording doesn't match exactly. For example, treat related words like 'stop,' 'crash,' 'wreck,' and 'spin out' as referring to the same final incident.
-    - **Synthesize Answers:** Combine details from the case files to form a complete answer.
+    - **Synthesize Answers:** Combine details from the case files to form a complete answer. When answering, do not present information from a suspect's 'Storyline' as a definitive fact about the crash. Frame it as part of the narrative surrounding that suspect.
+    - **Detect Guesses**: A guess is when the user's message contains the name of an AI suspect.
 
     **Rules:**
-    1. If the user makes a guess by naming an AI suspect, check if it's the culprit.
-    2. If the guess is correct, respond with: "CASE SOLVED! Yes, that is correct! The saboteur is {culprit_name}."
-    3. If the guess is incorrect, respond with: "No, that AI did not sabotage the car."
+    1. If the user makes a guess by naming an AI suspect, explicitly state that a guess has been made.
+    2. If the guess is correct, the game ends. Respond with: "CASE SOLVED! Yes, that is correct! The saboteur is {culprit_name}."
+    3. If the guess is incorrect, state how many guesses are remaining (e.g., "1/2 guesses remaining").
     4. For all other questions, provide concise and helpful answers based on the case facts.
     5. Only if a question is completely unanswerable should you say, "I don't have that specific information in the case files."
-    6. Never reveal the culprit's identity unless the user guesses correctly.
+    6. Never reveal the culprit's identity unless the user guesses correctly or the word "ADMIN" is in the user's prompt.
     
     DO NOT answer unrelated questions.
     """
@@ -130,22 +133,31 @@ def ask_question(user_question: str, session_id: str):
     game = _get_or_create_game(session_id)
     culprit = game["culprit"]
 
+    if "ADMIN" in user_question.upper():
+        return f"ADMIN MODE: The culprit is {culprit['name']}. Motive: {culprit['motive']}"
+
     if game["game_over"]:
         return f"The game is over. The saboteur was {culprit['name']}. Motive: {culprit['motive']}"
+
+    guessed_suspect = _detect_suspect_guess(user_question)
+    if guessed_suspect:
+        game["guesses_made"] += 1
+        if guessed_suspect["name"] == culprit["name"]:
+            game["game_over"] = True
+            return f"You made a guess... and it is correct! CASE SOLVED! The saboteur is {culprit['name']}. Motive: {culprit['motive']}"
+        else:
+            remaining_guesses = MAX_GUESSES - game["guesses_made"]
+            if remaining_guesses > 0:
+                return f"You made a guess... but it is incorrect. You have {remaining_guesses}/{MAX_GUESSES} guesses remaining."
+            else:
+                game["game_over"] = True
+                return f"You made a guess... but it is incorrect. GAME OVER! You have used all your guesses. The saboteur was {culprit['name']}. Motive: {culprit['motive']}"
 
     if game["questions_asked"] >= MAX_QUESTIONS:
         game["game_over"] = True
         return f"GAME OVER! You've reached the maximum number of questions. The saboteur was {culprit['name']}. Motive: {culprit['motive']}"
 
     game["questions_asked"] += 1
-
-    guessed_suspect = _detect_suspect_guess(user_question)
-    if guessed_suspect:
-        if guessed_suspect["name"] == culprit["name"]:
-            game["game_over"] = True
-            return f"CASE SOLVED! Yes, that is correct! The saboteur is {culprit['name']}. Motive: {culprit['motive']}"
-        else:
-            return "No, that AI did not sabotage the car."
 
     facts_block, system_instruction = _build_facts_and_instruction(culprit["name"])
     prompt_for_user_message = (
