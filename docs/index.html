@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Formula.AI - The Sabotage Mystery</title>
+    <link rel="icon" href="AIClubLogo.jpg" type="image/jpeg">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
@@ -53,6 +54,9 @@
         }
 
         .header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
             background: linear-gradient(90deg, var(--primary-red) 0%, #a10400 100%);
             color: var(--pure-white);
             padding: 15px 25px;
@@ -60,6 +64,17 @@
             border-bottom: 4px solid var(--dark-charcoal);
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
             position: relative;
+        }
+
+        .header-logo {
+            position: absolute;
+            left: 25px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            border: 2px solid var(--pure-white);
         }
 
         .header h1 {
@@ -337,8 +352,11 @@
 <body>
     <div class="game-container">
         <div class="header">
-            <h1>Formula.AI Sabotage</h1>
-            <p>Uncover the AI culprit behind the crash!</p>
+            <img src="AIClubLogo.jpg" alt="AI Club Logo" class="header-logo">
+            <div>
+                <h1>Formula.AI Sabotage</h1>
+                <p>Uncover the AI culprit behind the crash!</p>
+            </div>
             <div class="guess-counter" id="guess-counter"></div>
             <div class="race-icon">🏎️</div>
         </div>
