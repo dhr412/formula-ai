@@ -91,7 +91,7 @@
             font-weight: 500;
         }
 
-        .guess-counter {
+        #question-counter {
             position: absolute;
             top: 20px;
             right: 90px;
@@ -100,6 +100,19 @@
             font-weight: 700;
             color: var(--pure-white);
             text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.6);
+            text-align: right;
+        }
+
+        .guess-counter {
+            position: absolute;
+            top: 50px;
+            right: 90px;
+            font-family: var(--font-display);
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--light-gray);
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.6);
+            text-align: right;
         }
 
         .race-icon {
@@ -330,7 +343,7 @@
                 display: none;
             }
 
-            .guess-counter {
+            .guess-counter, #question-counter {
                 position: static;
                 text-align: center;
                 padding-top: 5px;
@@ -357,6 +370,7 @@
                 <h1>Formula.AI Sabotage</h1>
                 <p>Uncover the AI culprit behind the crash!</p>
             </div>
+            <div id="question-counter"></div>
             <div class="guess-counter" id="guess-counter"></div>
             <div class="race-icon">🏎️</div>
         </div>
@@ -431,6 +445,8 @@
         let isGameOver = false;
         let wrongGuesses = 0;
         const MAX_GUESSES = 2;
+        let questionsAsked = 0;
+        const MAX_QUESTIONS = 3;
 
         const questionInput = document.getElementById('questionInput');
         const sendBtn = document.getElementById('sendBtn');
@@ -445,12 +461,20 @@
             // Initial focus on the input
             questionInput.focus();
             updateGuessCounter();
+            updateQuestionCounter();
         });
 
         function updateGuessCounter() {
             const counterElement = document.getElementById('guess-counter');
             if (counterElement) {
-                counterElement.textContent = `Guesses: ${wrongGuesses} / ${MAX_GUESSES}`;
+                counterElement.textContent = `Guesses Left: ${MAX_GUESSES - wrongGuesses}`;
+            }
+        }
+
+        function updateQuestionCounter() {
+            const counterElement = document.getElementById('question-counter');
+            if (counterElement) {
+                counterElement.textContent = `Questions: ${questionsAsked} / ${MAX_QUESTIONS}`;
             }
         }
 
@@ -576,6 +600,9 @@
             addMessage(question, true);
             questionInput.value = '';
 
+            questionsAsked++;
+            updateQuestionCounter();
+
             const data = await handleApiRequest(API_CONFIG.askQuestion, {
                 method: 'POST',
                 body: JSON.stringify({question})
@@ -586,8 +613,12 @@
                 addMessage(responseText);
                 checkGuess(responseText);
 
-                if (data.game_over) {
-                    addMessage("This case is closed. Would you like to start a new investigation?");
+                if (data.game_over || questionsAsked >= MAX_QUESTIONS) {
+                    if (questionsAsked >= MAX_QUESTIONS && !data.game_over) {
+                        addMessage("You have run out of questions! The investigation is over.");
+                    } else if (data.game_over) {
+                        addMessage("This case is closed. Would you like to start a new investigation?");
+                    }
                     setGameOverState(true);
                 }
             }
@@ -596,7 +627,9 @@
         async function newGame() {
             sessionId = null;
             wrongGuesses = 0;
+            questionsAsked = 0;
             updateGuessCounter();
+            updateQuestionCounter();
             chatArea.innerHTML = ''; // Clear chat completely
             addMessage("New investigation started! I have a new culprit in mind. Ask your first question to begin!");
             setGameOverState(false);
@@ -626,6 +659,9 @@
             const guess = prompt("Who do you accuse? (Enter suspect's name)");
             if (!guess) return;
 
+            questionsAsked++;
+            updateQuestionCounter();
+
             const question = `I accuse ${guess}. Is that correct?`;
             addMessage(question, true);
 
@@ -637,8 +673,12 @@
             if (data) {
                 addMessage(data.answer);
                 checkGuess(data.answer);
-                if (data.game_over) {
-                    addMessage("This case is closed. Would you like to start a new investigation?");
+                if (data.game_over || questionsAsked >= MAX_QUESTIONS) {
+                    if (questionsAsked >= MAX_QUESTIONS && !data.game_over) {
+                        addMessage("You have run out of questions! The investigation is over.");
+                    } else if (data.game_over) {
+                        addMessage("This case is closed. Would you like to start a new investigation?");
+                    }
                     setGameOverState(true);
                 }
             }
