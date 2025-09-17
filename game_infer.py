@@ -64,10 +64,29 @@ def _get_or_create_game(session_id: str):
 
 
 def _build_facts_and_instruction(culprit_name: str):
+    drivers = [
+        "max hamilton",
+        "lewis verstappen",
+        "charles hamilton",
+        "sergio norris",
+        "oscar sainz",
+        "carlos perez",
+    ]
+    driver = random.choice(drivers)
+    car_number = random.randint(20, 30)
+    lap_of_accident = random.randint(12, 38)
     clues = [
         "CASE BRIEF: Formula.AI Grand Prix Final at SymbiTech Circuit",
         "INCIDENT: In the final moments of the race, the leading car crashed while entering a high-speed chicane.",
         "SUSPICION: Sabotage is the primary theory. Each of the four AIs had motive, means, and opportunity.",
+        "",
+        "--- SITUATIONAL DATA ---",
+        "Weather: clear",
+        f"Driver: {driver}",
+        "Car Name: DALL·E Dreamdrive",
+        "Team Name: red horse",
+        f"Car Number: {car_number}",
+        f"Lap of the accident: {lap_of_accident}",
         "",
         "SUSPECT PROFILES & KEY EVENTS:",
         "",
@@ -114,6 +133,7 @@ def _build_facts_and_instruction(culprit_name: str):
     DO NOT answer unrelated questions.
     """
     return facts_block, system_instruction
+
 
 
 def _detect_suspect_guess(user_text: str):
