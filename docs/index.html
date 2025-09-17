@@ -492,6 +492,9 @@
         let questionsAsked = 0;
         const MAX_QUESTIONS = 3;
 
+        const suspects = ['GPT-4', 'LangChain', 'DALL·E', 'BERT'];
+        const cleanedSuspectsMap = new Map(suspects.map(s => [s.toLowerCase().replace(/[^a-z0-9]/g, ''), s]));
+
         const questionInput = document.getElementById('questionInput');
         const sendBtn = document.getElementById('sendBtn');
         const chatArea = document.getElementById('chatArea');
@@ -661,13 +664,88 @@
             }
         }
 
+        function getSuspectFromQuestion(question) {
+            const cleanedQuestion = question.toLowerCase().replace(/[^a-z0-9\s]/g, '').trim();
+
+            // Condition 1: question is just a suspect name (e.g., "GPT-4", "dalle")
+            const words = cleanedQuestion.split(/\s+/);
+            const combined = words.join('');
+            
+            if (cleanedSuspectsMap.has(combined)) {
+                // To avoid matching sentences that happen to contain a name, check word count.
+                // A simple name guess should be 1 or 2 words ("dalle" or "gpt 4").
+                if (words.length <= 2) { 
+                    return cleanedSuspectsMap.get(combined);
+                }
+            }
+            
+            // Condition 2: "is it <suspect name>"
+            if (cleanedQuestion.startsWith('is it ')) {
+                const suspectPart = cleanedQuestion.substring(6).trim();
+                const combinedSuspectPart = suspectPart.split(/\s+/).join('');
+                if (cleanedSuspectsMap.has(combinedSuspectPart)) {
+                    return cleanedSuspectsMap.get(combinedSuspectPart);
+                }
+            }
+            
+            return null;
+        }
+
+        async function handleImplicitGuess(originalQuestion, suspectName) {
+            if (isLoading || isGameOver) return;
+            
+            addMessage(originalQuestion, true);
+            
+            if (!sessionId) {
+                addMessage("Please ask a question first to start the investigation!", false);
+                return;
+            }
+
+            if (wrongGuesses >= MAX_GUESSES) {
+                addMessage("You have run out of guesses!");
+                return;
+            }
+
+            const accusation = `I accuse ${suspectName}. Is that correct?`;
+
+            const data = await handleApiRequest(API_CONFIG.askQuestion, {
+                method: 'POST',
+                body: JSON.stringify({ question: accusation })
+            });
+
+            if (data) {
+                addMessage(data.answer);
+                checkGuess(data.answer); // This will increment wrongGuesses if incorrect.
+
+                if (data.game_over) {
+                    addMessage("This case is closed. Would you like to start a new investigation?");
+                    setGameOverState(true);
+                } else {
+                    // Wrong guess
+                    if (wrongGuesses >= MAX_GUESSES) {
+                        addMessage("You have run out of guesses! The investigation is over.");
+                        setGameOverState(true);
+                    }
+                }
+            }
+        }
+
         async function sendQuestion() {
             const question = questionInput.value.trim();
             if (!question || isLoading || isGameOver) return;
 
-            addMessage(question, true);
-            questionInput.value = '';
+            questionInput.value = ''; // Clear input immediately
 
+            const suspect = getSuspectFromQuestion(question);
+
+            if (suspect) {
+                await handleImplicitGuess(question, suspect);
+                return;
+            }
+
+            // It's a regular question
+            addMessage(question, true);
+            
             questionsAsked++;
             updateQuestionCounter();
 
