@@ -659,9 +659,6 @@
             const guess = prompt("Who do you accuse? (Enter suspect's name)");
             if (!guess) return;
 
-            questionsAsked++;
-            updateQuestionCounter();
-
             const question = `I accuse ${guess}. Is that correct?`;
             addMessage(question, true);
 
