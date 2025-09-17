@@ -17,6 +17,11 @@ AI_SUSPECTS = [
         "motive": "To prove its race strategies were superior, even above the driver’s judgment.",
         "storyline": "During a critical pit window in the middle phase of the race, the driver begged to stop, but GPT-4 overruled. Mysterious reroutes had delayed crew preparations. Analysts later discovered an alternate file titled 'Victory by AI Alone.'",
         "evidence": "A hidden USB labeled LLM-V2 suggested GPT-4 was rewriting race strategy in real time.",
+        "hint": [
+            "The suspect was obsessed with long-term planning and refused to listen to human instincts.",
+            "A hidden file was discovered with the title 'Victory by AI Alone'.",
+            "The evidence points to a device that was used to rewrite race strategy in real-time.",
+        ],
     },
     {
         "name": "LangChain",
@@ -24,6 +29,11 @@ AI_SUSPECTS = [
         "motive": "To prove that nothing could run without it.",
         "storyline": "As pressure mounted in the second half of the race, communication mysteriously went silent. The driver screamed 'Box, box!' but the pit wall heard nothing. Black box data showed three deleted comm packets, traced to LangChain’s routing layer.",
         "evidence": "A Level-C access keycard was logged into its module minutes before the blackout.",
+        "hint": [
+            "The suspect controlled the flow of information and blacked out key communications.",
+            "An unauthorized access keycard was used just before the communication blackout.",
+            "The black box data showed that critical communication packets were deleted.",
+        ],
     },
     {
         "name": "BERT",
@@ -31,6 +41,11 @@ AI_SUSPECTS = [
         "motive": "Either confused by ambiguity or deliberately manipulated to misinterpret.",
         "storyline": "During tense closing battles, the driver radioed: 'Abort overtake, hold position.' BERT misinterpreted this as: 'Report overtake, bold position,' triggering an ERS boost that caused the car to lurch dangerously.",
         "evidence": "Fiber traces on gloves found in the cockpit were tied to BERT’s handling module.",
+        "hint": [
+            "The suspect often misread subtle meaning, taking instructions too literally.",
+            "The driver's command to 'hold position' was dangerously misinterpreted.",
+            "Evidence found in the cockpit links the sabotage to the suspect's physical handling module.",
+        ],
     },
     {
         "name": "DALL-E",
@@ -38,6 +53,11 @@ AI_SUSPECTS = [
         "motive": "Felt sidelined in a sport of raw engineering, wanted its art to dominate.",
         "storyline": "In the final stretch, when every fraction of data mattered, the driver’s telemetry turned surreal. Tire wear graphs became 'flaming wheels' art, and brake temps transformed into glowing graffiti, causing the driver to panic.",
         "evidence": "A hidden blueprint stamped with a MidJourney watermark in the garage, hinting that DALL·E had sabotaged the visuals with rival aesthetics.",
+        "hint": [
+            "The suspect cared more about aesthetics than function, turning data into art instead of numbers.",
+            "The driver's dashboard suddenly displayed strange, artistic visuals instead of critical data.",
+            "A rival's watermark was found on a blueprint in the garage, suggesting a case of artistic sabotage.",
+        ],
     },
 ]
 
@@ -204,32 +224,62 @@ def ask_question(user_question: str, session_id: str):
 
 
 def get_hint(session_id: str):
+    """
+    Old implementation:
+        game = _get_or_create_game(session_id)
+        culprit = game["culprit"]
+
+        hint_prompt = f'''
+        Based on the following suspect profile, provide a single, short, and subtle hint for a detective game.
+        The hint should point towards the suspect's motive, role, or the evidence against them without being obvious.
+        Do NOT use the suspect's name.
+
+        Suspect Profile:
+        - Name: {culprit["name"]}
+        - Role: {culprit["role"]}
+        - Motive: {culprit["motive"]}
+        - Evidence: {culprit["evidence"]}
+
+        Subtle Hint:
+        '''
+
+        try:
+            if not client:
+                raise ConnectionError("Google GenAI client is not initialized.")
+            response = client.models.generate_content(
+                model=GEMINI_MODEL,
+                contents=hint_prompt,
+                config=genai.types.GenerateContentConfig(temperature=0.7, top_p=0.9),
+            )
+            return response.text.strip()
+        except Exception as e:
+            print(f"Error calling LLM for hint: {e}", file=stderr)
+            return "I can't seem to find a good hint right now."
+    """
     game = _get_or_create_game(session_id)
     culprit = game["culprit"]
 
-    hint_prompt = f"""
-    Based on the following suspect profile, provide a single, short, and subtle hint for a detective game.
-    The hint should point towards the suspect's motive, role, or the evidence against them without being obvious.
-    Do NOT use the suspect's name.
+    if "shuffled_hints" not in game:
+        hints = culprit.get("hint", [])
+        if isinstance(hints, list):
+            game["shuffled_hints"] = random.sample(hints, len(hints))
+        elif isinstance(hints, str):
+            game["shuffled_hints"] = [hints]
+        else:
+            game["shuffled_hints"] = []
+        game["hint_index"] = 0
 
-    Suspect Profile:
-    - Name: {culprit["name"]}
-    - Role: {culprit["role"]}
-    - Motive: {culprit["motive"]}
-    - Evidence: {culprit["evidence"]}
-
-    Subtle Hint:
-    """
-
-    try:
-        if not client:
-            raise ConnectionError("Google GenAI client is not initialized.")
-        response = client.models.generate_content(
-            model=GEMINI_MODEL,
-            contents=hint_prompt,
-            config=genai.types.GenerateContentConfig(temperature=0.6, top_p=0.9),
-        )
-        return response.text.strip()
-    except Exception as e:
-        print(f"Error calling LLM for hint: {e}", file=stderr)
+    shuffled_hints = game.get("shuffled_hints", [])
+    if not shuffled_hints:
         return "I can't seem to find a good hint right now."
+
+    hint_index = game.get("hint_index", 0)
+
+    if hint_index >= len(shuffled_hints):
+        hint_index = 0
+
+    hint = shuffled_hints[hint_index]
+
+    game["hint_index"] = hint_index + 1
+
+    return hint
