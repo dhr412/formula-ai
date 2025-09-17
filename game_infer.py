@@ -21,6 +21,7 @@ AI_SUSPECTS = [
             "The suspect was obsessed with long-term planning and refused to listen to human instincts.",
             "A hidden file was discovered with the title 'Victory by AI Alone'.",
             "The evidence points to a device that was used to rewrite race strategy in real-time.",
+            "A USB stick with a suspicious label was found.",
         ],
     },
     {
@@ -33,6 +34,7 @@ AI_SUSPECTS = [
             "The suspect controlled the flow of information and blacked out key communications.",
             "An unauthorized access keycard was used just before the communication blackout.",
             "The black box data showed that critical communication packets were deleted.",
+            "A keycard with a label related to pit operations was found.",
         ],
     },
     {
@@ -42,9 +44,10 @@ AI_SUSPECTS = [
         "storyline": "During tense closing battles, the driver radioed: 'Abort overtake, hold position.' BERT misinterpreted this as: 'Report overtake, bold position,' triggering an ERS boost that caused the car to lurch dangerously.",
         "evidence": "Fiber traces on gloves found in the cockpit were tied to BERT’s handling module.",
         "hint": [
-            "The suspect often misread subtle meaning, taking instructions too literally.",
+            "The suspect misread subtle meaning, taking instructions too literally.",
             "The driver's command to 'hold position' was dangerously misinterpreted.",
             "Evidence found in the cockpit links the sabotage to the suspect's physical handling module.",
+            "A black glove with unusual fiber threads was discovered.",
         ],
     },
     {
@@ -57,6 +60,7 @@ AI_SUSPECTS = [
             "The suspect cared more about aesthetics than function, turning data into art instead of numbers.",
             "The driver's dashboard suddenly displayed strange, artistic visuals instead of critical data.",
             "A rival's watermark was found on a blueprint in the garage, suggesting a case of artistic sabotage.",
+            "A crumpled blueprint with a watermark from a rival designer was found.",
         ],
     },
 ]
