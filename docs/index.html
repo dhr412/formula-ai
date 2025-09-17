@@ -738,28 +738,42 @@
                 return;
             }
 
-            const guess = prompt("Who do you accuse? (Enter suspect's name)");
-            if (!guess) return;
-
-            const question = `I accuse ${guess}. Is that correct?`;
-            addMessage(question, true);
-
-            const data = await handleApiRequest(API_CONFIG.askQuestion, {
-                method: 'POST',
-                body: JSON.stringify({question})
-            });
-
-            if (data) {
-                addMessage(data.answer);
-                checkGuess(data.answer);
-                if (data.game_over || questionsAsked >= MAX_QUESTIONS) {
-                    if (questionsAsked >= MAX_QUESTIONS && !data.game_over) {
-                        addMessage("You have run out of questions! The investigation is over.");
-                    } else if (data.game_over) {
-                        addMessage("This case is closed. Would you like to start a new investigation?");
-                    }
-                    setGameOverState(true);
+            while (wrongGuesses < MAX_GUESSES && !isGameOver) {
+                const remainingGuesses = MAX_GUESSES - wrongGuesses;
+                const guess = prompt(`You have ${remainingGuesses} guess(es) left. Who do you accuse? (Enter suspect's name)`);
+                if (!guess) {
+                    // User cancelled the prompt, so we break out of the accusation loop.
+                    return;
                 }
+
+                const question = `I accuse ${guess}. Is that correct?`;
+                addMessage(question, true);
+
+                const data = await handleApiRequest(API_CONFIG.askQuestion, {
+                    method: 'POST',
+                    body: JSON.stringify({question})
+                });
+
+                if (data) {
+                    addMessage(data.answer);
+                    checkGuess(data.answer); // This will increment wrongGuesses if incorrect.
+
+                    if (data.game_over) {
+                        addMessage("This case is closed. Would you like to start a new investigation?");
+                        setGameOverState(true);
+                        return; // Correct guess, so we exit the function.
+                    }
+                } else {
+                    // API request failed, break loop
+                    return;
+                }
+            }
+
+            // After the loop, if the game is not over (which means they didn't guess correctly)
+            // and they have no more guesses, end the game.
+            if (!isGameOver && wrongGuesses >= MAX_GUESSES) {
+                addMessage("You have run out of guesses! The investigation is over.");
+                setGameOverState(true);
             }
         }
     </script>
