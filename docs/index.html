@@ -319,6 +319,49 @@
             }
         }
 
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.7);
+            animation: fadeIn 0.3s;
+        }
+
+        .modal-content {
+            position: relative;
+            background-color: var(--dark-charcoal);
+            margin: 5% auto;
+            padding: 30px;
+            border: 2px solid var(--medium-gray);
+            border-radius: 15px;
+            width: 90%;
+            max-width: 800px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        .close-btn {
+            color: var(--light-gray);
+            position: absolute;
+            top: 15px;
+            right: 25px;
+            font-size: 2rem;
+            font-weight: bold;
+            line-height: 1;
+            cursor: pointer;
+            transition: color 0.2s ease-in-out;
+        }
+
+        .close-btn:hover,
+        .close-btn:focus {
+            color: var(--primary-red);
+            text-decoration: none;
+        }
+
         .welcome-message {
             text-align: center;
             color: var(--light-gray);
@@ -427,6 +470,7 @@
             </div>
             <div class="game-controls">
                 <button class="control-btn" id="newGameBtn" onclick="newGame()">New Investigation</button>
+                <button class="control-btn" id="overviewBtn" onclick="showOverview()">Show Overview</button>
                 <button class="control-btn" id="hintBtn" onclick="giveHint()">Get a Hint</button>
                 <button class="control-btn" id="guessBtn" onclick="makeGuess()">Accuse a Suspect</button>
             </div>
@@ -451,6 +495,7 @@
         const questionInput = document.getElementById('questionInput');
         const sendBtn = document.getElementById('sendBtn');
         const chatArea = document.getElementById('chatArea');
+        let welcomeMessageHTML = '';
 
         document.addEventListener('DOMContentLoaded', function () {
             questionInput.addEventListener('keypress', function (e) {
@@ -458,6 +503,29 @@
                     sendQuestion();
                 }
             });
+
+            const welcomeMessage = document.querySelector('.welcome-message');
+            if (welcomeMessage) {
+                welcomeMessageHTML = welcomeMessage.outerHTML;
+
+                const modal = document.createElement('div');
+                modal.id = 'overviewModal';
+                modal.className = 'modal';
+                modal.innerHTML = `
+                    <div class="modal-content">
+                        <span class="close-btn" onclick="closeOverview()">&times;</span>
+                        ${welcomeMessage.innerHTML}
+                    </div>
+                `;
+                document.body.appendChild(modal);
+
+                window.addEventListener('click', function(event) {
+                    if (event.target == modal) {
+                        closeOverview();
+                    }
+                });
+            }
+
             // Initial focus on the input
             questionInput.focus();
             updateGuessCounter();
@@ -630,9 +698,22 @@
             questionsAsked = 0;
             updateGuessCounter();
             updateQuestionCounter();
-            chatArea.innerHTML = ''; // Clear chat completely
-            addMessage("New investigation started! I have a new culprit in mind. Ask your first question to begin!");
+            if (welcomeMessageHTML) {
+                chatArea.innerHTML = welcomeMessageHTML;
+            } else {
+                chatArea.innerHTML = ''; // Fallback
+            }
             setGameOverState(false);
+        }
+
+        function showOverview() {
+            const modal = document.getElementById('overviewModal');
+            if (modal) modal.style.display = 'block';
+        }
+
+        function closeOverview() {
+            const modal = document.getElementById('overviewModal');
+            if (modal) modal.style.display = 'none';
         }
 
         async function giveHint() {
