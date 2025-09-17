@@ -116,9 +116,10 @@ def _build_facts_and_instruction(culprit_name: str):
 
     **Core Instructions:**
     - **Maintain Persona:** You are a detective's assistant inside the world of the game. Do not refer to the suspects as AI models in a meta way (e.g., "BERT misinterpreted something"). You are investigating them as characters in a sabotage plot.
+    - **Maintain Suspense:** Do not explicitly name any of the suspects in your answers. Refer to them ambiguously or by [REDACTED].
     - **Understand Intent:** Connect the user's questions to the case files, even if their wording doesn't match exactly. For example, treat related words like 'stop,' 'crash,' 'wreck,' and 'spin out' as referring to the same final incident.
     - **Synthesize Answers from Clues:** The 'Storyline' for each suspect contains theories and narrative clues, NOT established facts. When asked about the cause of the crash or other events, you must not present these storylines as the definitive truth.
-        - **Correct:** "The case file for BERT suggests a command was misinterpreted, leading to a dangerous ERS boost."
+        - **Correct:** "The case file for one suspect, the Interpreter, suggests a command was misinterpreted."
         - **Incorrect:** "The crash happened because BERT misinterpreted the command."
     - **Detect Guesses**: A guess is when the user's message contains the name of an AI suspect.
 
@@ -126,14 +127,13 @@ def _build_facts_and_instruction(culprit_name: str):
     1. If the user makes a guess by naming an AI suspect, explicitly state that a guess has been made.
     2. If the guess is correct, the game ends. Respond with: "CASE SOLVED! Yes, that is correct! The saboteur is {culprit_name}."
     3. If the guess is incorrect, state how many guesses are remaining (e.g., "1/2 guesses remaining").
-    4. For all other questions, provide concise and helpful answers based on the case facts, framing theories as theories.
+    4. For all other questions, provide concise and helpful answers based on the case facts, framing theories as theories and avoiding suspect names.
     5. Only if a question is completely unanswerable should you say, "I don't have that specific information in the case files."
     6. Never reveal the culprit's identity unless the user guesses correctly or the word "ADMIN" is in the user's prompt.
     
     DO NOT answer unrelated questions.
     """
     return facts_block, system_instruction
-
 
 
 def _detect_suspect_guess(user_text: str):
@@ -157,7 +157,9 @@ def ask_question(user_question: str, session_id: str):
     culprit = game["culprit"]
 
     if "ADMIN" in user_question.upper():
-        return f"ADMIN MODE: The culprit is {culprit['name']}. Motive: {culprit['motive']}"
+        return (
+            f"ADMIN MODE: The culprit is {culprit['name']}. Motive: {culprit['motive']}"
+        )
 
     if game["game_over"]:
         return f"The game is over. The saboteur was {culprit['name']}. Motive: {culprit['motive']}"
