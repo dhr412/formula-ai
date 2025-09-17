@@ -203,8 +203,7 @@ def ask_question(user_question: str, session_id: str):
                 return f"You made a guess... but it is incorrect. GAME OVER! You have used all your guesses. The saboteur was {culprit['name']}. Motive: {culprit['motive']}"
 
     if game["questions_asked"] >= MAX_QUESTIONS:
-        game["game_over"] = True
-        return f"GAME OVER! You've reached the maximum number of questions. The saboteur was {culprit['name']}. Motive: {culprit['motive']}"
+        return "You have run out of questions. You must now make a guess."
 
     game["questions_asked"] += 1
 

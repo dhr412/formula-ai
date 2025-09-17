@@ -681,13 +681,14 @@
                 addMessage(responseText);
                 checkGuess(responseText);
 
-                if (data.game_over || questionsAsked >= MAX_QUESTIONS) {
-                    if (questionsAsked >= MAX_QUESTIONS && !data.game_over) {
-                        addMessage("You have run out of questions! The investigation is over.");
-                    } else if (data.game_over) {
-                        addMessage("This case is closed. Would you like to start a new investigation?");
-                    }
+                if (data.game_over) {
+                    addMessage("This case is closed. Would you like to start a new investigation?");
                     setGameOverState(true);
+                } else if (questionsAsked >= MAX_QUESTIONS) {
+                    questionInput.disabled = true;
+                    sendBtn.disabled = true;
+                    questionInput.placeholder = "No more questions. Time to make a guess.";
+                    makeGuess();
                 }
             }
         }
