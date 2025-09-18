@@ -47,7 +47,7 @@ AI_SUSPECTS = [
             "The suspect misread subtle meaning, taking instructions too literally.",
             "The driver's command to 'hold position' was dangerously misinterpreted.",
             "Evidence found in the cockpit links the sabotage to the suspect's physical handling module.",
-            "A black glove with unusual fiber threads was discovered.",
+            "A white glove with unusual fiber threads was discovered.",
         ],
     },
     {
