@@ -552,6 +552,7 @@
             const teamNameModal = document.getElementById('teamNameModal');
             const teamNameForm = document.getElementById('teamNameForm');
             const teamNameInput = document.getElementById('teamNameInput');
+            teamNameInput.value = ''; // Clear cached name on refresh
             const gameInputs = document.querySelectorAll('.input-area .question-input, .input-area .send-btn, .input-area .control-btn');
 
             gameInputs.forEach(input => input.disabled = true);
