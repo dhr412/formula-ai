@@ -740,6 +740,15 @@
         function getSuspectFromQuestion(question) {
             const cleanedQuestion = question.toLowerCase().replace(/[^a-z0-9\s]/g, '').trim();
 
+            // Condition 2: "is it <suspect name>" - check this more specific pattern first.
+            if (cleanedQuestion.startsWith('is it ')) {
+                const suspectPart = cleanedQuestion.substring(6).trim();
+                const combinedSuspectPart = suspectPart.split(/\s+/).join('');
+                if (cleanedSuspectsMap.has(combinedSuspectPart)) {
+                    return cleanedSuspectsMap.get(combinedSuspectPart);
+                }
+            }
+
             // Condition 1: question is just a suspect name (e.g., "GPT-4", "dalle")
             const words = cleanedQuestion.split(/\s+/);
             const combined = words.join('');
@@ -749,15 +758,6 @@
                 // A simple name guess should be 1 or 2 words ("dalle" or "gpt 4").
                 if (words.length <= 2) {
                     return cleanedSuspectsMap.get(combined);
-                }
-            }
-
-            // Condition 2: "is it <suspect name>"
-            if (cleanedQuestion.startsWith('is it ')) {
-                const suspectPart = cleanedQuestion.substring(6).trim();
-                const combinedSuspectPart = suspectPart.split(/\s+/).join('');
-                if (cleanedSuspectsMap.has(combinedSuspectPart)) {
-                    return cleanedSuspectsMap.get(combinedSuspectPart);
                 }
             }
 
