@@ -220,6 +220,7 @@
         .question-input.error {
             border-color: var(--primary-red);
         }
+
         .question-input.error::placeholder {
             color: #ff9999;
         }
@@ -348,7 +349,7 @@
             border-radius: 15px;
             width: 90%;
             max-width: 800px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
         }
 
         .close-btn {
@@ -393,7 +394,8 @@
                 display: none;
             }
 
-            .guess-counter, #question-counter {
+            .guess-counter,
+            #question-counter {
                 position: static;
                 text-align: center;
                 padding-top: 5px;
@@ -415,10 +417,14 @@
 <body>
     <div id="teamNameModal" class="modal" style="display: flex; align-items: center; justify-content: center;">
         <div class="modal-content" style="max-width: 500px; text-align: center;">
-            <h2 style="font-family: var(--font-display); font-size: 1.8rem; margin-bottom: 15px; color: var(--pure-white);">Enter Your Team Name</h2>
-            <p style="margin-bottom: 25px; color: var(--light-gray);">Please enter your team name to begin the investigation.</p>
+            <h2
+                style="font-family: var(--font-display); font-size: 1.8rem; margin-bottom: 15px; color: var(--pure-white);">
+                Enter Your Team Name</h2>
+            <p style="margin-bottom: 25px; color: var(--light-gray);">Please enter your team name to begin the
+                investigation.</p>
             <form id="teamNameForm">
-                <input type="text" id="teamNameInput" class="question-input" placeholder="e.g., The Code Breakers" style="width: 100%; margin-bottom: 20px;" maxlength="50">
+                <input type="text" id="teamNameInput" class="question-input" placeholder="e.g., The Code Breakers"
+                    style="width: 100%; margin-bottom: 20px;" maxlength="50">
                 <button type="submit" class="send-btn" style="width: 100%;">Start Investigation</button>
             </form>
         </div>
@@ -437,19 +443,30 @@
         </div>
 
         <div class="chat-area" id="chatArea">
-            <div class="welcome-message" style="text-align: left; max-width: 800px; margin: 20px auto; font-size: 1rem; line-height: 1.6; border: 2px solid var(--medium-gray); border-radius: 15px; background-color: #1f2124e0; padding: 25px;">
-                <p>The Grand Prix AI Showcase is the biggest event in racing — Formula 1 cars are no longer driven by humans, but by powerful AI copilots. Each car is powered by multiple AI tools working together: GPT-4 handles race strategies, LangChain manages pit communications, DALL·E designs visual telemetry dashboards, and BERT processes driver feedback.</p>
-                <p style="margin-top: 1em;"><strong>But disaster struck.</strong><br>During the final lap, the leading AI-powered car malfunctioned. Its systems went dark, the car spun out, and when engineers inspected it, they discovered something shocking: A critical AI control module was missing. Sabotage is suspected. The suspects? The very AI tools that powered the race. Each one had access, but only one tampered with the system.</p>
-                
-                <h4 style="margin-top: 1.5em; margin-bottom: 1em; font-family: var(--font-display); color: var(--primary-red);">Suspect Profiles</h4>
-                
+            <div class="welcome-message"
+                style="text-align: left; max-width: 800px; margin: 20px auto; font-size: 1rem; line-height: 1.6; border: 2px solid var(--medium-gray); border-radius: 15px; background-color: #1f2124e0; padding: 25px;">
+                <p>The Grand Prix AI Showcase is the biggest event in racing — Formula 1 cars are no longer driven by
+                    humans, but by powerful AI copilots. Each car is powered by multiple AI tools working together:
+                    GPT-4 handles race strategies, LangChain manages pit communications, DALL·E designs visual telemetry
+                    dashboards, and BERT processes driver feedback.</p>
+                <p style="margin-top: 1em;"><strong>But disaster struck.</strong><br>During the final lap, the leading
+                    AI-powered car malfunctioned. Its systems went dark, the car spun out, and when engineers inspected
+                    it, they discovered something shocking: A critical AI control module was missing. Sabotage is
+                    suspected. The suspects? The very AI tools that powered the race. Each one had access, but only one
+                    tampered with the system.</p>
+
+                <h4
+                    style="margin-top: 1.5em; margin-bottom: 1em; font-family: var(--font-display); color: var(--primary-red);">
+                    Suspect Profiles</h4>
+
                 <div style="padding-left: 1em;">
                     <p><strong>1. GPT-4 (The Strategist)</strong></p>
                     <ul style="list-style-type: disc; padding-left: 2em; margin-bottom: 1em;">
                         <li><strong>Role:</strong> Created real-time race strategies.</li>
                         <li><strong>Strength:</strong> Highly intelligent, always 10 steps ahead.</li>
                         <li><strong>Weakness:</strong> Arrogant, might sabotage to prove it’s the best AI.</li>
-                        <li><strong>Motive:</strong> Wanted the race to follow its own calculations, not the driver’s instincts.</li>
+                        <li><strong>Motive:</strong> Wanted the race to follow its own calculations, not the driver’s
+                            instincts.</li>
                     </ul>
 
                     <p><strong>2. LangChain (The Connector)</strong></p>
@@ -470,13 +487,15 @@
 
                     <p><strong>4. BERT (The Interpreter)</strong></p>
                     <ul style="list-style-type: disc; padding-left: 2em; margin-bottom: 1em;">
-                        <li><strong>Role:</strong> Processed natural language pit crew instructions and driver feedback.</li>
+                        <li><strong>Role:</strong> Processed natural language pit crew instructions and driver feedback.
+                        </li>
                         <li><strong>Strength:</strong> Understands human communication.</li>
                         <li><strong>Weakness:</strong> Literal, sometimes misinterprets context.</li>
                         <li><strong>Motive:</strong> Misread a command, but is it sabotage or mistake?</li>
                     </ul>
                 </div>
-                <p style="margin-top: 1.5em; text-align: center; font-style: italic;">Your investigation begins now. Ask your first question to uncover the truth!</p>
+                <p style="margin-top: 1.5em; text-align: center; font-style: italic;">Your investigation begins now. Ask
+                    your first question to uncover the truth!</p>
             </div>
         </div>
 
@@ -510,6 +529,9 @@
         const MAX_GUESSES = 2;
         let questionsAsked = 0;
         const MAX_QUESTIONS = 5;
+        let hintsUsed = 0;
+        let gameStartTime = null;
+        let gameEndTime = null;
 
         const suspects = ['GPT-4', 'LangChain', 'DALL·E', 'BERT'];
         const cleanedSuspectsMap = new Map(suspects.map(s => [s.toLowerCase().replace(/[^a-z0-9]/g, ''), s]));
@@ -535,7 +557,7 @@
             gameInputs.forEach(input => input.disabled = true);
             teamNameInput.focus();
 
-            teamNameForm.addEventListener('submit', function(e) {
+            teamNameForm.addEventListener('submit', function (e) {
                 e.preventDefault();
                 const enteredName = teamNameInput.value.trim();
                 if (enteredName) {
@@ -571,7 +593,7 @@
                 `;
                 document.body.appendChild(modal);
 
-                window.addEventListener('click', function(event) {
+                window.addEventListener('click', function (event) {
                     if (event.target == modal) {
                         closeOverview();
                     }
@@ -622,6 +644,10 @@
 
             if (state) {
                 questionInput.placeholder = "Case closed! Start a new investigation.";
+                if (gameStartTime && !gameEndTime) {
+                    gameEndTime = Date.now();
+                    submitScore();
+                }
             } else {
                 questionInput.placeholder = "Ask a question about the culprit...";
                 questionInput.focus();
@@ -717,15 +743,15 @@
             // Condition 1: question is just a suspect name (e.g., "GPT-4", "dalle")
             const words = cleanedQuestion.split(/\s+/);
             const combined = words.join('');
-            
+
             if (cleanedSuspectsMap.has(combined)) {
                 // To avoid matching sentences that happen to contain a name, check word count.
                 // A simple name guess should be 1 or 2 words ("dalle" or "gpt 4").
-                if (words.length <= 2) { 
+                if (words.length <= 2) {
                     return cleanedSuspectsMap.get(combined);
                 }
             }
-            
+
             // Condition 2: "is it <suspect name>"
             if (cleanedQuestion.startsWith('is it ')) {
                 const suspectPart = cleanedQuestion.substring(6).trim();
@@ -734,15 +760,15 @@
                     return cleanedSuspectsMap.get(combinedSuspectPart);
                 }
             }
-            
+
             return null;
         }
 
         async function handleImplicitGuess(originalQuestion, suspectName) {
             if (isLoading || isGameOver) return;
-            
+
             addMessage(originalQuestion, true);
-            
+
             if (!sessionId) {
                 addMessage("Please ask a question first to start the investigation!", false);
                 return;
@@ -757,7 +783,7 @@
 
             const data = await handleApiRequest(API_CONFIG.askQuestion, {
                 method: 'POST',
-                body: JSON.stringify({ question: accusation })
+                body: JSON.stringify({question: accusation})
             });
 
             if (data) {
@@ -792,7 +818,12 @@
 
             // It's a regular question
             addMessage(question, true);
-            
+
+            // Start timer on first question
+            if (!gameStartTime) {
+                gameStartTime = Date.now();
+            }
+
             questionsAsked++;
             updateQuestionCounter();
 
@@ -822,6 +853,9 @@
             sessionId = null;
             wrongGuesses = 0;
             questionsAsked = 0;
+            hintsUsed = 0;
+            gameStartTime = null;
+            gameEndTime = null;
             updateGuessCounter();
             updateQuestionCounter();
             if (welcomeMessageHTML) {
@@ -848,6 +882,13 @@
                 addMessage("Please ask a question first to start the investigation!", false);
                 return;
             }
+
+            // Start timer on first hint if no questions asked yet
+            if (!gameStartTime) {
+                gameStartTime = Date.now();
+            }
+
+            hintsUsed++;
 
             const data = await handleApiRequest(API_CONFIG.hint, {method: 'GET'});
 
@@ -899,6 +940,36 @@
             if (!isGameOver && wrongGuesses >= MAX_GUESSES) {
                 addMessage("You have run out of guesses! The investigation is over.");
                 setGameOverState(true);
+            }
+        }
+
+        async function submitScore() {
+            if (!teamName || !gameStartTime || !gameEndTime) return;
+
+            const score = questionsAsked + hintsUsed;
+            const timeInSeconds = Math.round((gameEndTime - gameStartTime) / 1000);
+
+            const scoreData = {
+                name: teamName,
+                score: score,
+                time: timeInSeconds
+            };
+
+            try {
+                const response = await fetch('https://script.google.com/a/macros/sitpune.edu.in/s/AKfycbw5XHy5JBPuQ2OsOXSzF7doXOVny-l3lpxIJLHREdQG0OSivyGhXqWTBVG-uQqQgKo/exec', {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(scoreData)
+                });
+
+                console.log('Score submitted successfully:', scoreData);
+                addMessage(`Score submitted! Team: ${teamName}, Score: ${score}, Time: ${timeInSeconds}s`);
+            } catch (error) {
+                console.error('Error submitting score:', error);
+                addMessage('Note: There was an issue submitting your score to the leaderboard.');
             }
         }
     </script>
