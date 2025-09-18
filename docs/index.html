@@ -749,6 +749,20 @@
                     return cleanedSuspectsMap.get(combinedSuspectPart);
                 }
             }
+            if (cleanedQuestion.startsWith('is the culprit ')) {
+                const suspectPart = cleanedQuestion.substring(15).trim();
+                const combinedSuspectPart = suspectPart.split(/\s+/).join('');
+                if (cleanedSuspectsMap.has(combinedSuspectPart)) {
+                    return cleanedSuspectsMap.get(combinedSuspectPart);
+                }
+            }
+            if (cleanedQuestion.startsWith('is the saboteur ')) {
+                const suspectPart = cleanedQuestion.substring(16).trim();
+                const combinedSuspectPart = suspectPart.split(/\s+/).join('');
+                if (cleanedSuspectsMap.has(combinedSuspectPart)) {
+                    return cleanedSuspectsMap.get(combinedSuspectPart);
+                }
+            }
 
             // Condition 1: question is just a suspect name (e.g., "GPT-4", "dalle")
             const words = cleanedQuestion.split(/\s+/);
