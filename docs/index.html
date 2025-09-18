@@ -217,6 +217,13 @@
             box-shadow: 0 0 0 4px rgba(225, 6, 0, 0.2);
         }
 
+        .question-input.error {
+            border-color: var(--primary-red);
+        }
+        .question-input.error::placeholder {
+            color: #ff9999;
+        }
+
         .send-btn {
             background: var(--primary-red);
             color: var(--pure-white);
@@ -406,6 +413,17 @@
 </head>
 
 <body>
+    <div id="teamNameModal" class="modal" style="display: flex; align-items: center; justify-content: center;">
+        <div class="modal-content" style="max-width: 500px; text-align: center;">
+            <h2 style="font-family: var(--font-display); font-size: 1.8rem; margin-bottom: 15px; color: var(--pure-white);">Enter Your Team Name</h2>
+            <p style="margin-bottom: 25px; color: var(--light-gray);">Please enter your team name to begin the investigation.</p>
+            <form id="teamNameForm">
+                <input type="text" id="teamNameInput" class="question-input" placeholder="e.g., The Code Breakers" style="width: 100%; margin-bottom: 20px;" maxlength="50">
+                <button type="submit" class="send-btn" style="width: 100%;">Start Investigation</button>
+            </form>
+        </div>
+    </div>
+
     <div class="game-container">
         <div class="header">
             <img src="AIClubLogo.jpg" alt="AI Club Logo" class="header-logo">
@@ -486,6 +504,7 @@
 
         let isLoading = false;
         let sessionId = null;
+        let teamName = '';
         let isGameOver = false;
         let wrongGuesses = 0;
         const MAX_GUESSES = 2;
@@ -507,6 +526,36 @@
                 }
             });
 
+            // Team Name Modal Logic
+            const teamNameModal = document.getElementById('teamNameModal');
+            const teamNameForm = document.getElementById('teamNameForm');
+            const teamNameInput = document.getElementById('teamNameInput');
+            const gameInputs = document.querySelectorAll('.input-area .question-input, .input-area .send-btn, .input-area .control-btn');
+
+            gameInputs.forEach(input => input.disabled = true);
+            teamNameInput.focus();
+
+            teamNameForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const enteredName = teamNameInput.value.trim();
+                if (enteredName) {
+                    teamName = enteredName;
+                    teamNameModal.style.display = 'none';
+                    setGameOverState(false); // This enables inputs and focuses the question field
+                } else {
+                    teamNameInput.classList.add('error');
+                    teamNameInput.placeholder = "A team name is required to start!";
+                }
+            });
+
+            teamNameInput.addEventListener('input', () => {
+                if (teamNameInput.classList.contains('error')) {
+                    teamNameInput.classList.remove('error');
+                    teamNameInput.placeholder = "e.g., The Code Breakers";
+                }
+            });
+            // End Team Name Modal Logic
+
             const welcomeMessage = document.querySelector('.welcome-message');
             if (welcomeMessage) {
                 welcomeMessageHTML = welcomeMessage.outerHTML;
@@ -516,7 +565,7 @@
                 modal.className = 'modal';
                 modal.innerHTML = `
                     <div class="modal-content">
-                        <span class="close-btn" onclick="closeOverview()">&times;</span>
+                        <span class="close-btn" onclick="closeOverview()">×</span>
                         ${welcomeMessage.innerHTML}
                     </div>
                 `;
@@ -529,8 +578,6 @@
                 });
             }
 
-            // Initial focus on the input
-            questionInput.focus();
             updateGuessCounter();
             updateQuestionCounter();
         });
