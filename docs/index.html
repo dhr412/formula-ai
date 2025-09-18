@@ -948,28 +948,22 @@
 
             const score = questionsAsked + hintsUsed;
             const timeInSeconds = Math.round((gameEndTime - gameStartTime) / 1000);
+            const scoreData = {name: teamName, score, time: timeInSeconds};
+            const GAS_URL = 'https://script.google.com/a/macros/sitpune.edu.in/s/AKfycbw5XHy5JBPuQ2OsOXSzF7doXOVny-l3lpxIJLHREdQG0OSivyGhXqWTBVG-uQqQgKo/exec';
 
-            const scoreData = {
-                name: teamName,
-                score: score,
-                time: timeInSeconds
-            };
+            const form = new FormData();
+            form.append('name', teamName);
+            form.append('score', score);
+            form.append('time', timeInSeconds);
 
             try {
-                const response = await fetch('https://script.google.com/a/macros/sitpune.edu.in/s/AKfycbw5XHy5JBPuQ2OsOXSzF7doXOVny-l3lpxIJLHREdQG0OSivyGhXqWTBVG-uQqQgKo/exec', {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(scoreData)
-                });
-
-                console.log('Score submitted successfully:', scoreData);
-                addMessage(`Score submitted! Team: ${teamName}, Score: ${score}, Time: ${timeInSeconds}s`);
-            } catch (error) {
-                console.error('Error submitting score:', error);
-                addMessage('Note: There was an issue submitting your score to the leaderboard.');
+                const res = await fetch(GAS_URL, {method: 'POST', body: form});
+                if (!res.ok) throw new Error(res.status + ' ' + res.statusText);
+                addMessage(`Score submitted!<br>Team: ${teamName}, Score: ${score}, Time: ${timeInSeconds}s`);
+                console.log('Score submitted (form):', scoreData);
+                return;
+            } catch (err) {
+                console.warn('Form submit failed: ', err);
             }
         }
     </script>
