@@ -3,7 +3,7 @@ from google import genai
 from dotenv import load_dotenv
 from sys import stderr
 
-MAX_QUESTIONS = 3
+MAX_QUESTIONS = 5
 MAX_GUESSES = 2
 GEMINI_MODEL = "gemma-3-27b-it"
 
